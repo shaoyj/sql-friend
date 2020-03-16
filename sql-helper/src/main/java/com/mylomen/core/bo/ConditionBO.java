@@ -107,6 +107,10 @@ public class ConditionBO implements Serializable {
         return this;
     }
 
+    public ConditionBO initOrderBy(List<String> orderByList){
+        this.orderBy=orderByList;
+        return this;
+    }
 
     public ConditionBO set(String colName, Object colValue) {
         whereMap.put(colName, colValue);
