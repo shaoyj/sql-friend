@@ -109,10 +109,12 @@ public class NameParamSqlHelper {
         //limit
         if (conditionBO.isPageView()) {
             //分页
-            findSql.append(" limit ")
-                    .append((conditionBO.getCurPage() - 1) * conditionBO.getPageSize())
-                    .append(" , ")
-                    .append(conditionBO.getPageSize());
+            if(!conditionBO.isCountReq()){
+                findSql.append(" limit ")
+                        .append((conditionBO.getCurPage() - 1) * conditionBO.getPageSize())
+                        .append(" , ")
+                        .append(conditionBO.getPageSize());
+            }
         } else if (conditionBO.isExceptOne()) {
             if (MapUtils.isEmpty(whereMap)) {
                 throw new ParseSqlException("Query no conditions");

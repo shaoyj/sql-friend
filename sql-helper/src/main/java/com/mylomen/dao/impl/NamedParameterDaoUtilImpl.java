@@ -211,7 +211,7 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         }
         SqlArgsMapBO listSql = null;
         try {
-            ConditionBO conditionBO = new ConditionBO(entity).initWhereMap(whereMap);
+            ConditionBO conditionBO = new ConditionBO(entity).initWhereMap(whereMap).setPageView(pageView).setCountReq(true);
             //set count
             Long total = namedParameterJdbcTemplate.queryForObject(
                     "select count(*) from (" + NameParamSqlHelper.querySql(conditionBO).getSql() + ") temp_count",
@@ -219,7 +219,7 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
                     Long.class);
 
             //listSql
-            listSql = NameParamSqlHelper.querySql(conditionBO.setPageView(pageView));
+            listSql = NameParamSqlHelper.querySql(conditionBO.setCountReq(false));
 
             //query
             List<? extends TableInfoParserStrategy> query = namedParameterJdbcTemplate.query(
@@ -244,24 +244,26 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         }
         SqlArgsMapBO listSql = null;
         try {
+            ConditionBO conditionBO = new ConditionBO(entity)
+                    .initWhereMap(whereMap)
+                    .initResultArgs(resultArgs.toString())
+                    .setCountReq(true)
+                    .setPageView(pageView);
+            //获取 count
+            Long total = namedParameterJdbcTemplate.queryForObject(
+                    "select count(*) from (" + NameParamSqlHelper.querySql(conditionBO).getSql() + ") temp",
+                    listSql.getParamsMap(),
+                    Long.class
+            );
+
             //listSql
-            listSql = NameParamSqlHelper.querySql(
-                    new ConditionBO(entity)
-                            .initWhereMap(whereMap)
-                            .initResultArgs(resultArgs.toString())
-                            .setPageView(pageView));
+            listSql = NameParamSqlHelper.querySql(conditionBO.setCountReq(false));
             //set result
             pageView.setList(cast(namedParameterJdbcTemplate.query(
                     listSql.getSql(),
                     listSql.getParamsMap(),
                     new BeanRowMapperHelper<>(entity.getClass()))));
 
-            //获取 count
-            Long total = namedParameterJdbcTemplate.queryForObject(
-                    "select count(*) from (" + listSql.getSql() + ") temp",
-                    listSql.getParamsMap(),
-                    Long.class
-            );
             pageView.setTotalSize(total);
         } catch (Exception e) {
             logger.warn("occur_err_at_queryForList.queryForPage:{} e", listSql, e);
@@ -432,21 +434,24 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         Assert.isTrue(condition.isPageView(), "Should be a paged query");
 
         PageView pageView = PageView.newPage(condition.getCurPage(), condition.getPageSize());
-        SqlArgsMapBO listSql = NameParamSqlHelper.querySql(condition);
 
+        SqlArgsMapBO listSql = NameParamSqlHelper.querySql(condition.setCountReq(false));
         try {
+            //set count
+            Long total = namedParameterJdbcTemplate.queryForObject(
+                    "select count(*) from (" + NameParamSqlHelper.querySql(condition.setCountReq(true)).getSql() + ") temp_count",
+                    listSql.getParamsMap(),
+                    Long.class
+            );
+
+
             List<? extends TableInfoParserStrategy> query = namedParameterJdbcTemplate.query(
                     listSql.getSql(),
                     listSql.getParamsMap(),
                     new BeanRowMapperHelper<>(condition.getEntity().getClass()));
             pageView.setList(cast(query));
 
-            //set count
-            Long total = namedParameterJdbcTemplate.queryForObject(
-                    "select count(*) from (" + listSql.getSql() + ") temp_count",
-                    listSql.getParamsMap(),
-                    Long.class
-            );
+
             pageView.setTotalSize(total);
         } catch (Exception e) {
             logger.warn("occur_err_at_queryForList.queryForPage:{} e", listSql, e);

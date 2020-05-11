@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.mylomen.core.consts.ConditionConstant;
 import com.mylomen.domain.PageView;
 import com.mylomen.strategy.style.TableInfoParserStrategy;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
@@ -50,6 +49,11 @@ public class ConditionBO implements Serializable {
      * 期望返回一条数据
      */
     private boolean exceptOne;
+
+    /**
+     * 是否是count 请求
+     */
+    private boolean countReq = false;
 
     private Map<String, Object> whereMap;
     private StringBuilder groupSql;
@@ -111,8 +115,8 @@ public class ConditionBO implements Serializable {
         return this;
     }
 
-    public ConditionBO initOrderBy(List<String> orderByList){
-        this.orderBy=orderByList;
+    public ConditionBO initOrderBy(List<String> orderByList) {
+        this.orderBy = orderByList;
         return this;
     }
 
@@ -186,6 +190,12 @@ public class ConditionBO implements Serializable {
      */
     public boolean isPageView() {
         return this.getCurPage() != null && this.getPageSize() != null;
+    }
+
+
+    public ConditionBO setCountReq(Boolean countReq){
+        this.countReq=countReq;
+        return this;
     }
 
     @Override
