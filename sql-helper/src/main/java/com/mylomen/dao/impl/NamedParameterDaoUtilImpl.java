@@ -211,10 +211,15 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         }
         SqlArgsMapBO listSql = null;
         try {
+            ConditionBO conditionBO = new ConditionBO(entity).initWhereMap(whereMap);
+            //set count
+            Long total = namedParameterJdbcTemplate.queryForObject(
+                    "select count(*) from (" + NameParamSqlHelper.querySql(conditionBO).getSql() + ") temp_count",
+                    listSql.getParamsMap(),
+                    Long.class);
+
             //listSql
-            listSql = NameParamSqlHelper.querySql(new ConditionBO(entity)
-                    .initWhereMap(whereMap)
-                    .setPageView(pageView));
+            listSql = NameParamSqlHelper.querySql(conditionBO.setPageView(pageView));
 
             //query
             List<? extends TableInfoParserStrategy> query = namedParameterJdbcTemplate.query(
@@ -223,12 +228,6 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
                     new BeanRowMapperHelper<>(entity.getClass()));
             pageView.setList(cast(query));
 
-            //set count
-            Long total = namedParameterJdbcTemplate.queryForObject(
-                    "select count(*) from (" + listSql.getSql() + ") temp_count",
-                    listSql.getParamsMap(),
-                    Long.class
-            );
             pageView.setTotalSize(total);
         } catch (Exception e) {
             logger.warn("occur_err_at_queryForList.queryForPage:{} e", listSql, e);
@@ -317,10 +316,14 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
                         .initResultArgs(resultArgs.toString())
                         .exceptOne());
 
-        return cast(namedParameterJdbcTemplate.queryForObject(
-                oneSql.getSql(),
-                oneSql.getParamsMap(),
-                new BeanRowMapperHelper<>(entity.getClass())));
+        try {
+            return cast(namedParameterJdbcTemplate.queryForObject(
+                    oneSql.getSql(),
+                    oneSql.getParamsMap(),
+                    new BeanRowMapperHelper<>(entity.getClass())));
+        } catch (EmptyResultDataAccessException zeroEx) {
+            return null;
+        }
     }
 
     @Override
@@ -474,10 +477,14 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         checkCondition(condition);
         SqlArgsMapBO oneSql = NameParamSqlHelper.querySql(condition.exceptOne());
 
-        return cast(namedParameterJdbcTemplate.queryForObject(
-                oneSql.getSql(),
-                oneSql.getParamsMap(),
-                new BeanRowMapperHelper<>(condition.getEntity().getClass())));
+        try {
+            return cast(namedParameterJdbcTemplate.queryForObject(
+                    oneSql.getSql(),
+                    oneSql.getParamsMap(),
+                    new BeanRowMapperHelper<>(condition.getEntity().getClass())));
+        } catch (EmptyResultDataAccessException zeroEx) {
+            return null;
+        }
     }
 
     @Override

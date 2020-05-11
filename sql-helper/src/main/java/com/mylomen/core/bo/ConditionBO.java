@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.mylomen.core.consts.ConditionConstant;
 import com.mylomen.domain.PageView;
 import com.mylomen.strategy.style.TableInfoParserStrategy;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +20,9 @@ import java.util.Map;
  * @date: 2019/10/10
  * @time: 3:04 PM
  */
-@Data
+@Setter
+@Getter
+//@Builder
 public class ConditionBO implements Serializable {
     private static final long serialVersionUID = 2623629044953081798L;
 

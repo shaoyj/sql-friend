@@ -7,7 +7,14 @@ import com.mylomen.core.bo.SqlArgsMapBO;
 import com.mylomen.core.cache.EntityCache;
 import com.mylomen.core.consts.ConditionConstant;
 import com.mylomen.core.sql.SqlConvertStrategy;
-import com.mylomen.core.sql.condition.*;
+import com.mylomen.core.sql.condition.GeStrategy;
+import com.mylomen.core.sql.condition.GtStrategy;
+import com.mylomen.core.sql.condition.InStrategy;
+import com.mylomen.core.sql.condition.LeStrategy;
+import com.mylomen.core.sql.condition.LikeStrategy;
+import com.mylomen.core.sql.condition.LtStrategy;
+import com.mylomen.core.sql.condition.NeStrategy;
+import com.mylomen.core.sql.condition.NotInStrategy;
 import com.mylomen.core.utils.BeanUtils;
 import com.mylomen.exception.ParseSqlException;
 import com.mylomen.exception.ParseTableInfoException;
@@ -20,7 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author: Shaoyongjun
@@ -162,6 +174,12 @@ public class NameParamSqlHelper {
 
         //解析
         filterConditionConvertSql(whereMap, delSql);
+
+        //检查是否有limit 限制
+        if (conditionBO.getPageSize() != null && conditionBO.getPageSize() > 0) {
+            delSql.append(" limit ").append(conditionBO.getPageSize());
+        }
+
         //设置
         argsMapBO.setParamsMap(whereMap);
         argsMapBO.setSql(delSql.toString());

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sql-helper</artifactId>
-    <version>${project.parent.version}</version>
+    <version>2.0.6</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>mylomen</groupId>
             <artifactId>sql-api</artifactId>
-            <version>2.0.4</version>
+            <version>2.0.5</version>
         </dependency>
 
         <dependency>
