@@ -213,9 +213,10 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         try {
             ConditionBO conditionBO = new ConditionBO(entity).initWhereMap(whereMap).setPageView(pageView).setCountReq(true);
             //set count
+            SqlArgsMapBO listCountSql = NameParamSqlHelper.querySql(conditionBO);
             Long total = namedParameterJdbcTemplate.queryForObject(
-                    "select count(*) from (" + NameParamSqlHelper.querySql(conditionBO).getSql() + ") temp_count",
-                    listSql.getParamsMap(),
+                    "select count(*) from (" + listCountSql.getSql() + ") temp_count",
+                    listCountSql.getParamsMap(),
                     Long.class);
 
             //listSql
@@ -242,6 +243,7 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         if (pageView == null) {
             pageView = new PageView();
         }
+
         SqlArgsMapBO listSql = null;
         try {
             ConditionBO conditionBO = new ConditionBO(entity)
@@ -249,10 +251,11 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
                     .initResultArgs(resultArgs.toString())
                     .setCountReq(true)
                     .setPageView(pageView);
+            SqlArgsMapBO listCountSql = NameParamSqlHelper.querySql(conditionBO);
             //获取 count
             Long total = namedParameterJdbcTemplate.queryForObject(
-                    "select count(*) from (" + NameParamSqlHelper.querySql(conditionBO).getSql() + ") temp",
-                    listSql.getParamsMap(),
+                    "select count(*) from (" + listCountSql.getSql() + ") temp",
+                    listCountSql.getParamsMap(),
                     Long.class
             );
 
@@ -438,9 +441,10 @@ public class NamedParameterDaoUtilImpl implements DaoUtil {
         SqlArgsMapBO listSql = NameParamSqlHelper.querySql(condition.setCountReq(false));
         try {
             //set count
+            SqlArgsMapBO listCountSql = NameParamSqlHelper.querySql(condition.setCountReq(true));
             Long total = namedParameterJdbcTemplate.queryForObject(
-                    "select count(*) from (" + NameParamSqlHelper.querySql(condition.setCountReq(true)).getSql() + ") temp_count",
-                    listSql.getParamsMap(),
+                    "select count(*) from (" + listCountSql.getSql() + ") temp_count",
+                    listCountSql.getParamsMap(),
                     Long.class
             );
 
