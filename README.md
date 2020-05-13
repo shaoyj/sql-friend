@@ -12,7 +12,7 @@
  &lt;dependency&gt;<br/>
   &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;mylomen&lt;/groupId&gt;<br/>
   &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;syj-sql&lt;/artifactId&gt;<br/>
-  &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.0.8-rc&lt;/version&gt;<br/>
         &lt;/dependency&gt;<br/>
 
 <br/>
